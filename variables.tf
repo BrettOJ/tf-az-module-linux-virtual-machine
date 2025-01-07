@@ -17,12 +17,6 @@ variable "location" {
   description = "The Azure location where the Linux Virtual Machine should exist."
 }
 
-variable "licence_type" {
-  type        = string
-  description = "(Optional) Specifies the License Type for this Virtual Machine. Possible values are RHEL_BYOS, RHEL_BASE, RHEL_EUS, RHEL_SAPAPPS, RHEL_SAPHA, RHEL_BASESAPAPPS, RHEL_BASESAPHA, SLES_BYOS, SLES_SAP, SLES_HPC"
-}
-
-
 variable "network_interface_ids" {
   type        = list(string)
   description = "A list of Network Interface IDs which should be attached to this Virtual Machine. The first Network Interface ID in this list will be the Primary Network Interface on the Virtual Machine."
@@ -241,7 +235,6 @@ variable "source_image_reference" {
     sku       = string
     version   = string
   })
-  default     = null
   description = "A source_image_reference block as defined below. Changing this forces a new resource to be created."
 }
 

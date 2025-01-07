@@ -25,8 +25,8 @@ module "azure_virtual_network" {
   source                 = "git::https://github.com/BrettOJ/tf-az-module-virtual-network?ref=main"
   location               = var.location
   resource_group_name    = module.resource_groups.rg_output[1].name
-  address_space          = var.address_space
-  dns_servers            = var.dns_servers
+  address_space          = ["10.0.0.0/16"]
+  dns_servers            = null
   naming_convention_info = local.naming_convention_info
   tags                   = local.tags
 
@@ -39,8 +39,8 @@ module "azure_subnet" {
   location               = var.location
   naming_convention_info = local.naming_convention_info
   tags                   = local.tags
-  create_nsg             = var.create_nsg
-  subnets = {
+  create_nsg = var.create_nsg
+    subnets = {
     001 = {
       address_prefixes                          = ["10.0.1.0/24"]
       service_endpoints                         = null
@@ -57,7 +57,7 @@ module "nic_obj" {
   source              = "git::https://github.com/BrettOJ/tf-az-module-network-interface?ref=main"
   location            = var.location
   resource_group_name = module.resource_groups.rg_output[1].name
-  subnet_id           = module.vnet_subnets_001.snet_output.001.id
+  subnet_id           = module.azure_subnet.snet_output[1].id
   instances = {
     nic1 = {
       index = 1
@@ -79,11 +79,12 @@ module "azurerm_linux_virtual_machine" {
   source                                                 = "../"
   resource_group_name                                    = module.resource_groups.rg_output.1.name
   location                                               = var.location
-  size                                                   = var.size
+  size                = "Standard_F2"
   admin_username                                         = var.admin_username
   admin_password                                         = var.admin_password
-  allow_extension_operations                             = var.allow_extension_operations
-  availability_set_id                                    = var.availability_set_id
+  network_interface_ids = [module.nic_obj.nic_output.nic1.id]
+   availability_set_id                                    = var.availability_set_id
+   allow_extension_operations                             = var.allow_extension_operations
   bypass_platform_safety_checks_on_user_schedule_enabled = var.bypass_platform_safety_checks_on_user_schedule_enabled
   capacity_reservation_group_id                          = var.capacity_reservation_group_id
   computer_name                                          = var.computer_name
@@ -96,7 +97,6 @@ module "azurerm_linux_virtual_machine" {
   eviction_policy                                        = var.eviction_policy
   extensions_time_budget                                 = var.extensions_time_budget
   disable_password_authentication                        = false
-  network_interface_ids                                  = [module.nic_obj.nic_output.nic1.id]
   patch_assessment_mode                                  = var.patch_assessment_mode
   patch_mode                                             = var.patch_mode
   max_bid_price                                          = var.max_bid_price
@@ -112,24 +112,22 @@ module "azurerm_linux_virtual_machine" {
   vtpm_enabled                                           = var.vtpm_enabled
   virtual_machine_scale_set_id                           = var.virtual_machine_scale_set_id
   zone                                                   = var.zone
-  licence_type                                           = var.licence_type
-  tags                                                   = local.tags
+ tags                                                   = local.tags
   naming_convention_info                                 = local.naming_convention_info
 
-
-  source_image_reference = {
-    publisher = var.source_image_reference_publisher
-    offer     = var.source_image_reference_offer
-    sku       = var.source_image_reference_sku
-    version   = var.source_image_reference_version
-  }
-
   os_disk = {
-    storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
-  boot_diagnostics = {
+  source_image_reference ={
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+
+    boot_diagnostics = {
     storage_account_uri = var.boot_diagnostics_storage_account_uri
   }
 
@@ -144,17 +142,7 @@ module "azurerm_linux_virtual_machine" {
 
   }
 
-  gallery_application = {
-    version_id                                  = var.gallery_application_version_id
-    automatic_upgrade_enabled                   = var.gallery_application_automatic_upgrade_enabled
-    configuration_blob_uri                      = var.gallery_application_configuration_blob_uri
-    order                                       = var.gallery_application_order
-    tag                                         = var.gallery_application_tag
-    treat_failure_as_deployment_failure_enabled = var.gallery_application_treat_failure_as_deployment_failure_enabled
-  }
-
-
-  plan = {
+    plan = {
     name      = var.plan_name
     product   = var.plan_product
     publisher = var.plan_publisher
@@ -169,18 +157,22 @@ module "azurerm_linux_virtual_machine" {
     timeout = null
   }
 
-  secret = {
+  
+  gallery_application = {
+    version_id                                  = var.gallery_application_version_id
+    automatic_upgrade_enabled                   = var.gallery_application_automatic_upgrade_enabled
+    configuration_blob_uri                      = var.gallery_application_configuration_blob_uri
+    order                                       = var.gallery_application_order
+    tag                                         = var.gallery_application_tag
+    treat_failure_as_deployment_failure_enabled = var.gallery_application_treat_failure_as_deployment_failure_enabled
+  }
+
+    secret = {
     certificate = {
       url = var.secret_certificate_url
     }
     key_vault_id = var.secret_key_vault_id
   }
-
-  admin_ssh_key = {
-    public_key = var.admin_ssh_key_public_key
-    username   = var.admin_ssh_key_username
-  }
-
 
 }
 

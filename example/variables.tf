@@ -23,11 +23,6 @@ variable "admin_password" {
   description = "The Password which should be used for the local-administrator on this Virtual Machine."
 }
 
-variable "licence_type" {
-  type        = string
-  description = "(Optional) Specifies the License Type for this Virtual Machine. Possible values are RHEL_BYOS, RHEL_BASE, RHEL_EUS, RHEL_SAPAPPS, RHEL_SAPHA, RHEL_BASESAPAPPS, RHEL_BASESAPHA, SLES_BYOS, SLES_SAP, SLES_HPC"
-}
-
 variable "size" {
   type        = string
   description = "The SKU which should be used for this Virtual Machine, such as Standard_F2."
@@ -221,12 +216,6 @@ variable "source_image_id" {
   description = "The ID of the Image which this Virtual Machine should be created from. Changing this forces a new resource to be created. Possible Image ID types include Image IDs, Shared Image IDs, Shared Image Version IDs, Community Gallery Image IDs, Community Gallery Image Version IDs, Shared Gallery Image IDs and Shared Gallery Image Version IDs."
 }
 
-
-variable "tags" {
-  type        = map(string)
-  description = "A mapping of tags which should be assigned to this Virtual Machine."
-}
-
 variable "os_image_notification_timeout" {
   type        = string
   description = "A os_image_notification block as defined below."
@@ -291,13 +280,6 @@ variable "admin_ssh_key_username" {
   description = "The username of the SSH key pair that should be used to authenticate to the Virtual Machine. Changing this forces a new resource to be created."
 
 }
-
-variable "vnet_001_address_space" {
-  type        = string
-  description = "The address space that is used the virtual network."
-}
-
-
 variable "public_integration_snet_name" {
   type        = string
   description = "The name of the subnet that is used for the public integration."
@@ -322,4 +304,17 @@ variable "source_image_reference_publisher" {
 variable "source_image_reference_sku" {
   type        = string
   description = "The SKU of the source image to use for the virtual machine."
+}
+
+variable "address_space" {
+  type        = string
+  description = "The address space that is used the virtual network."
+  
+}
+
+variable "create_nsg" {
+  type        = bool
+  description = "Create a network security group for the virtual network."
+  default     = false
+  
 }
