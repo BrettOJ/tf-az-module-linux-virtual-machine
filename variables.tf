@@ -226,7 +226,6 @@ variable "secure_boot_enabled" {
 variable "source_image_id" {
   type        = string
   description = "The ID of the Image which this Virtual Machine should be created from. Changing this forces a new resource to be created. Possible Image ID types include Image IDs, Shared Image IDs, Shared Image Version IDs, Community Gallery Image IDs, Community Gallery Image Version IDs, Shared Gallery Image IDs and Shared Gallery Image Version IDs."
-  default = null
 }
 
 variable "source_image_reference" {

@@ -37,15 +37,13 @@ resource "azurerm_linux_virtual_machine" "example" {
   zone                                                   = var.zone
   tags                                                   = var.tags
 
-  dynamic "source_image_reference" {
-    for_each = var.source_image_reference != null ? [] : [var.source_image_reference]
-    content {
+  source_image_reference {
       publisher = var.source_image_reference.publisher
       offer     = var.source_image_reference.offer
       sku       = var.source_image_reference.sku
       version   = var.source_image_reference.version
     }
-  }
+  
 
   os_disk {
     storage_account_type = "Standard_LRS"
