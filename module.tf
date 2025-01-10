@@ -2,9 +2,9 @@ resource "azurerm_linux_virtual_machine" "example" {
   name                                                   = module.vm_name.naming_convention_output[var.naming_convention_info.name].names.0
   resource_group_name                                    = var.resource_group_name
   location                                               = var.location
-  size                                                   = "Standard_D2s_v3"
-  admin_username                                         = "P@ssw0rd1234!"
-  admin_password                                         = "P@ssw0rd1234!"
+  size                                                   = var.size
+  admin_username                                         = var.admin_username
+  admin_password                                         = var.admin_password
   allow_extension_operations                             = var.allow_extension_operations
   availability_set_id                                    = var.availability_set_id
   bypass_platform_safety_checks_on_user_schedule_enabled = var.bypass_platform_safety_checks_on_user_schedule_enabled
